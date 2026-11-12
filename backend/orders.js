@@ -11,6 +11,10 @@ const orderSchema =
                 required: true,
                 unique: true
             },
+            userId: {
+    type: String,
+    required: true
+},
 
 
             customer: {
