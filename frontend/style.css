@@ -746,3 +746,61 @@ select {
 
     background: #f5f5f5;
 }
+.account-order-card {
+
+    border: 1px solid #ddd;
+
+    border-radius: 12px;
+
+    padding: 16px;
+
+    margin-top: 12px;
+
+    background: #fafafa;
+}
+
+
+.account-order-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 12px;
+
+}
+
+
+.account-order-header span {
+
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    background: #fff3cd;
+
+    color: #856404;
+
+    font-size: 13px;
+
+}
+
+
+.account-order-card p {
+
+    margin: 7px 0;
+
+    font-size: 14px;
+
+}
+
+
+.account-order-total {
+
+    font-size: 16px !important;
+
+    margin-top: 12px !important;
+
+}
