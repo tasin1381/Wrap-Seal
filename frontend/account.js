@@ -1,10 +1,36 @@
+// ========================================
+// WRAP & SEAL — FIREBASE ACCOUNT SYSTEM
+// ========================================
+
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyCJx8A6rJExtGxL5xuZqR-nCC3eXsRMEJg",
+    authDomain: "tasin-40c58.firebaseapp.com",
+    projectId: "tasin-40c58",
+    storageBucket: "tasin-40c58.firebasestorage.app",
+    messagingSenderId: "1089282991754",
+    appId: "1:1089282991754:web:fcc35d27d8d5d515eb2f73",
+    measurementId: "G-L1HT9YRPE4"
+};
+
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+
+// ========================================
+// OPEN / CLOSE ACCOUNT
+// ========================================
+
 function openAccount() {
 
     document
         .getElementById("account-modal")
         .classList.add("active");
 
-    loadAccountInfo();
 }
 
 
@@ -13,79 +39,435 @@ function closeAccount() {
     document
         .getElementById("account-modal")
         .classList.remove("active");
+
 }
 
 
-function loadAccountInfo() {
+// ========================================
+// LOGIN / SIGNUP SWITCH
+// ========================================
 
-    const saved =
-        JSON.parse(
-            localStorage.getItem(
-                "wrap_seal_customer"
-            )
+function showLogin() {
+
+    document.getElementById(
+        "login-section"
+    ).style.display = "block";
+
+    document.getElementById(
+        "signup-section"
+    ).style.display = "none";
+
+    clearAuthMessage();
+
+}
+
+
+function showSignup() {
+
+    document.getElementById(
+        "login-section"
+    ).style.display = "none";
+
+    document.getElementById(
+        "signup-section"
+    ).style.display = "block";
+
+    clearAuthMessage();
+
+}
+
+
+// ========================================
+// MESSAGE
+// ========================================
+
+function showAuthMessage(message, success = false) {
+
+    const element =
+        document.getElementById("auth-message");
+
+    if (!element) return;
+
+    element.textContent = message;
+
+    element.className =
+        success
+            ? "auth-success"
+            : "auth-error";
+
+}
+
+
+function clearAuthMessage() {
+
+    const element =
+        document.getElementById("auth-message");
+
+    if (element) {
+
+        element.textContent = "";
+
+        element.className = "";
+
+    }
+
+}
+
+
+// ========================================
+// FIREBASE ERROR MESSAGE
+// ========================================
+
+function getFirebaseError(error) {
+
+    const errors = {
+
+        "auth/email-already-in-use":
+            "This email is already registered.",
+
+        "auth/invalid-email":
+            "Please enter a valid email address.",
+
+        "auth/weak-password":
+            "Password should contain at least 6 characters.",
+
+        "auth/user-not-found":
+            "No account found with this email.",
+
+        "auth/wrong-password":
+            "Incorrect email or password.",
+
+        "auth/invalid-credential":
+            "Incorrect email or password.",
+
+        "auth/too-many-requests":
+            "Too many attempts. Please try again later."
+
+    };
+
+
+    return errors[error.code] ||
+        "Something went wrong. Please try again.";
+
+}
+
+
+// ========================================
+// CREATE ACCOUNT
+// ========================================
+
+async function createAccount(event) {
+
+    event.preventDefault();
+
+    clearAuthMessage();
+
+
+    const name =
+        document
+            .getElementById("signup-name")
+            .value
+            .trim();
+
+
+    const email =
+        document
+            .getElementById("signup-email")
+            .value
+            .trim();
+
+
+    const password =
+        document
+            .getElementById("signup-password")
+            .value;
+
+
+    if (password.length < 6) {
+
+        showAuthMessage(
+            "Password must contain at least 6 characters."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        showAuthMessage(
+            "Creating your account...",
+            true
         );
 
 
-    if (!saved) return;
+        const result =
+            await auth.createUserWithEmailAndPassword(
+                email,
+                password
+            );
 
 
-    document.getElementById(
-        "account-name"
-    ).value = saved.name || "";
+        const user =
+            result.user;
 
 
-    document.getElementById(
-        "account-email"
-    ).value = saved.email || "";
+        // Save customer's display name
+        await user.updateProfile({
+
+            displayName: name
+
+        });
 
 
-    document.getElementById(
-        "account-phone"
-    ).value = saved.phone || "";
+        // Save additional customer information
+        await db
+            .collection("users")
+            .doc(user.uid)
+            .set({
+
+                name: name,
+
+                email: email,
+
+                createdAt:
+                    firebase.firestore.FieldValue.serverTimestamp()
+
+            });
+
+
+        showAuthMessage(
+            "Account created successfully!",
+            true
+        );
+
+
+        document
+            .getElementById("signup-form")
+            .reset();
+
+
+        setTimeout(() => {
+
+            updateAccountUI(user);
+
+        }, 800);
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showAuthMessage(
+            getFirebaseError(error)
+        );
+
+    }
+
 }
 
 
-document
-    .getElementById("account-form")
-    .addEventListener(
-        "submit",
-        function(event) {
+// ========================================
+// LOGIN
+// ========================================
 
-            event.preventDefault();
+async function loginAccount(event) {
 
+    event.preventDefault();
 
-            const customer = {
-
-                name:
-                    document.getElementById(
-                        "account-name"
-                    ).value.trim(),
-
-                email:
-                    document.getElementById(
-                        "account-email"
-                    ).value.trim(),
-
-                phone:
-                    document.getElementById(
-                        "account-phone"
-                    ).value.trim()
-
-            };
+    clearAuthMessage();
 
 
-            localStorage.setItem(
-
-                "wrap_seal_customer",
-
-                JSON.stringify(customer)
-
-            );
+    const email =
+        document
+            .getElementById("login-email")
+            .value
+            .trim();
 
 
-            alert(
-                "Customer information saved."
-            );
+    const password =
+        document
+            .getElementById("login-password")
+            .value;
 
-        }
-    );
+
+    try {
+
+        showAuthMessage(
+            "Signing in...",
+            true
+        );
+
+
+        await auth.signInWithEmailAndPassword(
+            email,
+            password
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showAuthMessage(
+            getFirebaseError(error)
+        );
+
+    }
+
+}
+
+
+// ========================================
+// LOGOUT
+// ========================================
+
+async function logoutAccount() {
+
+    try {
+
+        await auth.signOut();
+
+        showLogin();
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+// ========================================
+// FORGOT PASSWORD
+// ========================================
+
+async function resetPassword() {
+
+    const email =
+        document
+            .getElementById("login-email")
+            .value
+            .trim();
+
+
+    if (!email) {
+
+        showAuthMessage(
+            "Enter your email address first."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        await auth.sendPasswordResetEmail(
+            email
+        );
+
+
+        showAuthMessage(
+            "Password reset email has been sent.",
+            true
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showAuthMessage(
+            getFirebaseError(error)
+        );
+
+    }
+
+}
+
+
+// ========================================
+// ACCOUNT UI
+// ========================================
+
+function updateAccountUI(user) {
+
+    const loggedOut =
+        document.getElementById(
+            "account-logged-out"
+        );
+
+
+    const loggedIn =
+        document.getElementById(
+            "account-logged-in"
+        );
+
+
+    if (!user) {
+
+        if (loggedOut)
+            loggedOut.style.display = "block";
+
+        if (loggedIn)
+            loggedIn.style.display = "none";
+
+        return;
+
+    }
+
+
+    if (loggedOut)
+        loggedOut.style.display = "none";
+
+
+    if (loggedIn)
+        loggedIn.style.display = "block";
+
+
+    const nameElement =
+        document.getElementById(
+            "account-user-name"
+        );
+
+
+    const emailElement =
+        document.getElementById(
+            "account-user-email"
+        );
+
+
+    if (nameElement) {
+
+        nameElement.textContent =
+            user.displayName ||
+            "Wrap & Seal Customer";
+
+    }
+
+
+    if (emailElement) {
+
+        emailElement.textContent =
+            user.email || "";
+
+    }
+
+}
+
+
+// ========================================
+// AUTH STATE
+// ========================================
+
+auth.onAuthStateChanged(
+    function(user) {
+
+        updateAccountUI(user);
+
+    }
+);
