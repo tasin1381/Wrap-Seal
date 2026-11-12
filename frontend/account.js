@@ -464,13 +464,36 @@ function updateAccountUI(user) {
 // AUTH STATE
 // ========================================
 
-auth.onAuthStateChanged(
-    function(user) {
+auth.onAuthStateChanged(function(user) {
 
-        updateAccountUI(user);
+    updateAccountUI(user);
+
+
+    if (user) {
+
+        loadMyOrders();
+
+    } else {
+
+        const ordersContainer =
+            document.getElementById(
+                "account-orders"
+            );
+
+
+        if (ordersContainer) {
+
+            ordersContainer.innerHTML = `
+                <p>
+                    Login to see your orders.
+                </p>
+            `;
+
+        }
 
     }
-);
+
+});
 async function loadMyOrders() {
 
     const ordersContainer =
