@@ -7,9 +7,7 @@ function openCheckout() {
         return;
     }
 
-
     closeCart();
-
 
     document
         .getElementById("checkout-modal")
@@ -32,13 +30,11 @@ function getDeliveryCharge() {
             "checkout-area"
         ).value;
 
-
     if (area === "outside") {
 
         return APP_CONFIG
             .DELIVERY_OUTSIDE_DHAKA;
     }
-
 
     return APP_CONFIG
         .DELIVERY_INSIDE_DHAKA;
@@ -48,7 +44,6 @@ function getDeliveryCharge() {
 async function submitOrder(event) {
 
     event.preventDefault();
-
 
     if (cart.length === 0) {
 
@@ -77,6 +72,25 @@ async function submitOrder(event) {
 
 
     try {
+
+        // ==========================================
+        // 1. GET LOGGED-IN FIREBASE USER
+        // ==========================================
+
+        const user = firebase.auth().currentUser;
+
+
+        if (!user) {
+
+            throw new Error(
+                "Please login to your account before placing an order."
+            );
+        }
+
+
+        // ==========================================
+        // 2. GET CHECKOUT INFORMATION
+        // ==========================================
 
         const name =
             document.getElementById(
@@ -114,6 +128,10 @@ async function submitOrder(event) {
             ).value.trim();
 
 
+        // ==========================================
+        // 3. CALCULATE ORDER TOTAL
+        // ==========================================
+
         const subtotal =
             getCartSubtotal();
 
@@ -126,7 +144,14 @@ async function submitOrder(event) {
             subtotal + deliveryCharge;
 
 
+        // ==========================================
+        // 4. CREATE ORDER DATA
+        // ==========================================
+
         const orderData = {
+
+            // Firebase user ID
+            userId: user.uid,
 
             customer: {
 
@@ -157,6 +182,10 @@ async function submitOrder(event) {
 
         };
 
+
+        // ==========================================
+        // 5. SEND ORDER TO BACKEND
+        // ==========================================
 
         const response =
             await fetch(
@@ -192,6 +221,61 @@ async function submitOrder(event) {
         }
 
 
+        // ==========================================
+        // 6. SAVE ORDER HISTORY TO FIRESTORE
+        // ==========================================
+
+        await db
+            .collection("orders")
+            .doc(result.orderId)
+            .set({
+
+                orderId:
+                    result.orderId,
+
+                userId:
+                    user.uid,
+
+                customer: {
+
+                    name,
+
+                    phone,
+
+                    email,
+
+                    address
+
+                },
+
+                area,
+
+                notes,
+
+                items: cart,
+
+                subtotal,
+
+                deliveryCharge,
+
+                total,
+
+                paymentMethod:
+                    "Cash on Delivery",
+
+                status:
+                    "Pending",
+
+                createdAt:
+                    firebase.firestore.FieldValue.serverTimestamp()
+
+            });
+
+
+        // ==========================================
+        // 7. SHOW SUCCESS MESSAGE
+        // ==========================================
+
         message.innerHTML = `
 
             <div class="order-success">
@@ -225,6 +309,10 @@ async function submitOrder(event) {
         `;
 
 
+        // ==========================================
+        // 8. CLEAR CART
+        // ==========================================
+
         clearCart();
 
 
@@ -233,6 +321,14 @@ async function submitOrder(event) {
                 "checkout-form"
             )
             .reset();
+
+
+        // Refresh My Orders
+        if (typeof loadMyOrders === "function") {
+
+            loadMyOrders();
+
+        }
 
 
     } catch (error) {
