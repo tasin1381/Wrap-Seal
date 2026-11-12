@@ -81,6 +81,18 @@ app.post(
 
             const data =
                 req.body;
+            if (!data.userId) {
+
+    return res.status(400).json({
+
+        success: false,
+
+        message:
+            "User account is required."
+
+    });
+
+}
 
 
             if (
@@ -134,6 +146,8 @@ app.post(
 
                     customer:
                         data.customer,
+                    userId:
+                       data.userId,
 
                     area:
                         data.area,
