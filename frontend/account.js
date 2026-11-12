@@ -471,3 +471,186 @@ auth.onAuthStateChanged(
 
     }
 );
+async function loadMyOrders() {
+
+    const ordersContainer =
+        document.getElementById(
+            "account-orders"
+        );
+
+
+    const user =
+        firebase.auth().currentUser;
+
+
+    if (!user) {
+
+        ordersContainer.innerHTML = `
+            <p>
+                Please login to see your orders.
+            </p>
+        `;
+
+        return;
+    }
+
+
+    ordersContainer.innerHTML = `
+        <p>
+            Loading your orders...
+        </p>
+    `;
+
+
+    try {
+
+        const snapshot =
+            await db
+                .collection("orders")
+                .where(
+                    "userId",
+                    "==",
+                    user.uid
+                )
+                .get();
+
+
+        if (snapshot.empty) {
+
+            ordersContainer.innerHTML = `
+                <p>
+                    You haven't placed any orders yet.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        const orders =
+            snapshot.docs.map(
+                doc => doc.data()
+            );
+
+
+        // Newest orders first
+        orders.sort(
+            (a, b) => {
+
+                const dateA =
+                    a.createdAt
+                        ? a.createdAt.toMillis()
+                        : 0;
+
+                const dateB =
+                    b.createdAt
+                        ? b.createdAt.toMillis()
+                        : 0;
+
+                return dateB - dateA;
+            }
+        );
+
+
+        ordersContainer.innerHTML =
+            orders.map(
+                order => {
+
+                    const date =
+                        order.createdAt
+                            ? order.createdAt
+                                .toDate()
+                                .toLocaleString()
+                            : "Date unavailable";
+
+
+                    return `
+
+                        <div class="account-order-card">
+
+                            <div class="account-order-header">
+
+                                <strong>
+                                    Order #${order.orderId}
+                                </strong>
+
+                                <span>
+                                    ${order.status || "Pending"}
+                                </span>
+
+                            </div>
+
+
+                            <p>
+                                <strong>
+                                    Date:
+                                </strong>
+
+                                ${date}
+                            </p>
+
+
+                            <p>
+                                <strong>
+                                    Items:
+                                </strong>
+
+                                ${order.items.length}
+                            </p>
+
+
+                            <p>
+                                <strong>
+                                    Delivery:
+                                </strong>
+
+                                ${
+                                    order.area === "outside"
+                                        ? "Outside Dhaka"
+                                        : "Inside Dhaka"
+                                }
+                            </p>
+
+
+                            <p>
+                                <strong>
+                                    Payment:
+                                </strong>
+
+                                ${order.paymentMethod}
+                            </p>
+
+
+                            <p class="account-order-total">
+
+                                <strong>
+                                    Total:
+                                </strong>
+
+                                ${APP_CONFIG.CURRENCY}${order.total}
+
+                            </p>
+
+                        </div>
+
+                    `;
+
+                }
+            ).join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load orders:",
+            error
+        );
+
+
+        ordersContainer.innerHTML = `
+            <p class="order-error">
+                Failed to load your orders.
+            </p>
+        `;
+    }
+}
