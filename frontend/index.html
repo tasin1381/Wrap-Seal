@@ -307,7 +307,7 @@
     id="account-modal"
 >
 
-    <div class="modal-box">
+    <div class="modal-box account-box">
 
         <button
             class="modal-close"
@@ -317,55 +317,205 @@
         </button>
 
 
-        <h2>
-            My Account
-        </h2>
+        <!-- =====================
+             LOGGED OUT
+        ====================== -->
 
-
-        <form
-            id="account-form"
+        <div
+            id="account-logged-out"
         >
 
-            <input
-                type="text"
-                id="account-name"
-                placeholder="Full Name"
-                required
+            <h2>
+                My Account
+            </h2>
+
+
+            <div class="account-tabs">
+
+                <button
+                    type="button"
+                    onclick="showLogin()"
+                >
+                    Sign In
+                </button>
+
+
+                <button
+                    type="button"
+                    onclick="showSignup()"
+                >
+                    Create Account
+                </button>
+
+            </div>
+
+
+            <!-- LOGIN -->
+
+            <div id="login-section">
+
+                <form
+                    id="login-form"
+                    onsubmit="loginAccount(event)"
+                >
+
+                    <input
+                        type="email"
+                        id="login-email"
+                        placeholder="Email Address"
+                        required
+                    >
+
+
+                    <input
+                        type="password"
+                        id="login-password"
+                        placeholder="Password"
+                        required
+                    >
+
+
+                    <button
+                        type="submit"
+                        class="primary-btn full-btn"
+                    >
+                        Sign In
+                    </button>
+
+                </form>
+
+
+                <button
+                    type="button"
+                    class="forgot-btn"
+                    onclick="resetPassword()"
+                >
+                    Forgot Password?
+                </button>
+
+            </div>
+
+
+            <!-- SIGN UP -->
+
+            <div
+                id="signup-section"
+                style="display: none;"
             >
 
+                <form
+                    id="signup-form"
+                    onsubmit="createAccount(event)"
+                >
 
-            <input
-                type="email"
-                id="account-email"
-                placeholder="Email Address"
-                required
+                    <input
+                        type="text"
+                        id="signup-name"
+                        placeholder="Full Name"
+                        required
+                    >
+
+
+                    <input
+                        type="email"
+                        id="signup-email"
+                        placeholder="Email Address"
+                        required
+                    >
+
+
+                    <input
+                        type="password"
+                        id="signup-password"
+                        placeholder="Password (6+ characters)"
+                        minlength="6"
+                        required
+                    >
+
+
+                    <button
+                        type="submit"
+                        class="primary-btn full-btn"
+                    >
+                        Create Account
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <p id="auth-message"></p>
+
+        </div>
+
+
+        <!-- =====================
+             LOGGED IN
+        ====================== -->
+
+        <div
+            id="account-logged-in"
+            style="display: none;"
+        >
+
+            <h2>
+                My Account
+            </h2>
+
+
+            <div class="customer-profile">
+
+                <p>
+                    Welcome,
+                    <strong
+                        id="account-user-name"
+                    >
+                    </strong>
+                </p>
+
+
+                <p
+                    id="account-user-email"
+                    class="account-email"
+                >
+                </p>
+
+            </div>
+
+
+            <hr>
+
+
+            <h3>
+                My Orders
+            </h3>
+
+
+            <div
+                id="account-orders"
             >
 
+                <p>
+                    Your order history will appear here.
+                </p>
 
-            <input
-                type="tel"
-                id="account-phone"
-                placeholder="Phone Number"
-                required
-            >
+            </div>
 
 
             <button
-                type="submit"
-                class="primary-btn full-btn"
+                type="button"
+                class="logout-btn"
+                onclick="logoutAccount()"
             >
-                Continue
+                Sign Out
             </button>
 
-        </form>
-
-
-        <div id="account-orders"></div>
+        </div>
 
     </div>
 
 </div>
-
 
 
 <!-- =========================
@@ -476,6 +626,12 @@
 <script src="js/cart.js"></script>
 
 <script src="js/checkout.js"></script>
+    
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>    
 
 <script src="js/account.js"></script>
 
