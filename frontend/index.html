@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Wrap & Seal</title>
+
+    <meta
+        name="description"
+        content="Wrap & Seal — Packed with care. Made for you."
+    >
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="site-header">
+
+    <div class="container header-inner">
+
+        <a href="#home" class="logo">
+            WRAP <span>&</span> SEAL
+        </a>
+
+
+        <nav class="navigation">
+
+            <a href="#home">Home</a>
+
+            <a href="#shop">Shop</a>
+
+            <a href="#about">About</a>
+
+            <a href="#contact">Contact</a>
+
+        </nav>
+
+
+        <div class="header-actions">
+
+            <button
+                class="icon-btn"
+                onclick="openAccount()"
+                title="My Account"
+            >
+                <i class="fa-regular fa-user"></i>
+            </button>
+
+
+            <button
+                class="icon-btn cart-button"
+                onclick="openCart()"
+                title="Cart"
+            >
+
+                <i class="fa-solid fa-bag-shopping"></i>
+
+                <span id="cart-count">0</span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero" id="home">
+
+    <div class="container hero-content">
+
+        <p class="eyebrow">
+            WRAP & SEAL
+        </p>
+
+        <h1>
+            Packed with care.<br>
+            Made for you.
+        </h1>
+
+        <p class="hero-description">
+            Discover products selected with care,
+            packed beautifully and delivered to your door.
+        </p>
+
+        <a href="#shop" class="primary-btn">
+            Shop Now
+        </a>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     SHOP
+========================= -->
+
+<section class="section" id="shop">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="eyebrow">
+                OUR COLLECTION
+            </p>
+
+            <h2>
+                Shop Our Products
+            </h2>
+
+            <p>
+                Find something you'll love.
+            </p>
+
+        </div>
+
+
+        <div
+            class="products-grid"
+            id="products-grid"
+        ></div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     ABOUT
+========================= -->
+
+<section class="section about-section" id="about">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="eyebrow">
+                ABOUT US
+            </p>
+
+            <h2>
+                Welcome to Wrap & Seal
+            </h2>
+
+            <p>
+                We believe every order should feel
+                personal, simple and carefully handled.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     CONTACT
+========================= -->
+
+<section class="section" id="contact">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="eyebrow">
+                CONTACT
+            </p>
+
+            <h2>
+                Get In Touch
+            </h2>
+
+        </div>
+
+
+        <div class="contact-grid">
+
+            <div class="contact-card">
+
+                <i class="fa-solid fa-phone"></i>
+
+                <h3>Phone</h3>
+
+                <p id="store-phone"></p>
+
+            </div>
+
+
+            <div class="contact-card">
+
+                <i class="fa-solid fa-envelope"></i>
+
+                <h3>Email</h3>
+
+                <p id="store-email"></p>
+
+            </div>
+
+
+            <div class="contact-card">
+
+                <i class="fa-solid fa-location-dot"></i>
+
+                <h3>Address</h3>
+
+                <p id="store-address"></p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     CART MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="cart-modal"
+>
+
+    <div class="modal-box">
+
+        <button
+            class="modal-close"
+            onclick="closeCart()"
+        >
+            &times;
+        </button>
+
+
+        <h2>Your Cart</h2>
+
+
+        <div id="cart-items"></div>
+
+
+        <div class="cart-total">
+
+            <strong>Total</strong>
+
+            <strong id="cart-total">
+                ৳0
+            </strong>
+
+        </div>
+
+
+        <button
+            class="primary-btn full-btn"
+            onclick="openCheckout()"
+        >
+            Checkout
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     ACCOUNT MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="account-modal"
+>
+
+    <div class="modal-box">
+
+        <button
+            class="modal-close"
+            onclick="closeAccount()"
+        >
+            &times;
+        </button>
+
+
+        <h2>
+            My Account
+        </h2>
+
+
+        <form
+            id="account-form"
+        >
+
+            <input
+                type="text"
+                id="account-name"
+                placeholder="Full Name"
+                required
+            >
+
+
+            <input
+                type="email"
+                id="account-email"
+                placeholder="Email Address"
+                required
+            >
+
+
+            <input
+                type="tel"
+                id="account-phone"
+                placeholder="Phone Number"
+                required
+            >
+
+
+            <button
+                type="submit"
+                class="primary-btn full-btn"
+            >
+                Continue
+            </button>
+
+        </form>
+
+
+        <div id="account-orders"></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     CHECKOUT MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="checkout-modal"
+>
+
+    <div class="modal-box">
+
+        <button
+            class="modal-close"
+            onclick="closeCheckout()"
+        >
+            &times;
+        </button>
+
+
+        <h2>
+            Checkout
+        </h2>
+
+
+        <form id="checkout-form">
+
+
+            <input
+                type="text"
+                id="checkout-name"
+                placeholder="Full Name"
+                required
+            >
+
+
+            <input
+                type="tel"
+                id="checkout-phone"
+                placeholder="Phone Number"
+                required
+            >
+
+
+            <input
+                type="email"
+                id="checkout-email"
+                placeholder="Email Address"
+                required
+            >
+
+
+            <textarea
+                id="checkout-address"
+                placeholder="Full Delivery Address"
+                required
+            ></textarea>
+
+
+            <select id="checkout-area">
+
+                <option value="inside">
+                    Inside Dhaka
+                </option>
+
+                <option value="outside">
+                    Outside Dhaka
+                </option>
+
+            </select>
+
+
+            <textarea
+                id="checkout-notes"
+                placeholder="Order notes (optional)"
+            ></textarea>
+
+
+            <button
+                type="submit"
+                class="primary-btn full-btn"
+            >
+                Place Order
+            </button>
+
+        </form>
+
+
+        <div id="checkout-message"></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script src="data.js"></script>
+
+<script src="js/config.js"></script>
+
+<script src="js/products.js"></script>
+
+<script src="js/cart.js"></script>
+
+<script src="js/checkout.js"></script>
+
+<script src="js/account.js"></script>
+
+<script src="js/main.js"></script>
+
+
+</body>
+
+</html>
